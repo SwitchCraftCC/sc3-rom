@@ -42,6 +42,25 @@ local function log(message)
   term.setTextColour(oldColour)
 end
 
+local function handleChatMessage(data)
+  local event = data.event
+  local source
+  if data.event == "chat_discord" then
+    source = {data.discordUser.name and (data.discordUser.name .. "#" .. data.discordUser.discriminator) or data.discordUser.id}
+  elseif data.event == "chat_chatbox" then
+    source = {data.rawName, data.user.name or data.user.uuid}
+  else
+    source = {data.user.name or data.user.uuid}
+  end
+
+  os.queueEvent(
+    event,
+    unpack(source),
+    data.rawText or data.text,
+    data
+  )
+end
+
 local function handleEventMessage(data)
   if not data.event then return end
 
@@ -76,25 +95,6 @@ local function handleEventMessage(data)
   elseif data.event == "server_restart_cancelled" then
     os.queueEvent("server_restart_cancelled", data.restartType, data)
   end
-end
-
-local function handleChatMessage(data)
-  local event = data.event
-  local source
-  if data.event == "chat_discord" then
-    source = {data.discordUser.name and (data.discordUser.name .. "#" .. data.discordUser.discriminator) or data.discordUser.id}
-  elseif data.event == "chat_chatbox" then
-    source = {data.rawName, data.user.name or data.user.uuid}
-  else
-    source = {data.user.name or data.user.uuid}
-  end
-
-  os.queueEvent(
-    event,
-    unpack(source),
-    data.rawText or data.text,
-    data
-  )
 end
 
 local function handleMessage(eventData)
