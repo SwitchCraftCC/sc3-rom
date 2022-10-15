@@ -192,7 +192,7 @@ function run()
 
   log("Connecting to chatbox server at " .. SERVER_URL)
   licenseKey = getLicenseKey()
-  wsURL = SERVER_URL .. "/" .. textutils.urlEncode(licenseKey)
+  wsURL = SERVER_URL .. "/v2/" .. textutils.urlEncode(licenseKey)
 
   http.websocketAsync(wsURL)
 
