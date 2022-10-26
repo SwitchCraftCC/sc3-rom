@@ -15,6 +15,14 @@ local backgroundColour = colours[backgroundColourName]
 local textColourName = settings.get("streetsign.textColour", "white")
 local textColour = colours[textColourName]
 
+local backgroundPalette = settings.get("streetsign.backgroundPalette", "5da818")
+
+if (settings.get("motd.enable") or settings.get("shell.allow_disk_startup")) then
+  settings.set("motd.enable", false)
+  settings.set("shell.allow_disk_startup", false)
+  settings.save("/.settings")
+end
+
 if not colours[backgroundColourName] then
   error(string.format("Street Sign:\nBackground colour `%s` is invalid.", backgroundColourName), 0)
 elseif not colours[textColourName] then
@@ -24,6 +32,10 @@ end
 local function draw(name, mon)
 	mon.setTextScale(1)
 	local w, h = mon.getSize()
+
+  if backgroundColour == colours.green and #backgroundPalette > 0 then
+    mon.setPaletteColour(colours.green, tonumber(backgroundPalette, 16))
+  end
 
 	mon.setBackgroundColour(backgroundColour)
 	mon.setTextColour(textColour)

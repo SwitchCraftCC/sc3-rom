@@ -35,6 +35,8 @@ local streetName = field("streetsign.streetName", "Street name")
 local leftText = field("streetsign.leftText", "Left text")
 local rightText = field("streetsign.rightText", "Right text")
 
+settings.set("motd.enable", false)
+settings.set("shell.allow_disk_startup", false)
 settings.save("/.settings")
 term.setTextColour(colours.green)
 print()
