@@ -2,7 +2,7 @@
 set -x
 
 if [ ! -d "CC-Tweaked" ]; then
-  git clone https://github.com/SquidDev-CC/CC-Tweaked.git
+  git clone https://github.com/CC-Tweaked/CC-Tweaked.git
 else
   git -C CC-Tweaked pull -q
 fi
