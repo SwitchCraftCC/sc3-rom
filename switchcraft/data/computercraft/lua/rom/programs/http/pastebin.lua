@@ -56,12 +56,12 @@ end
 
 --- Attempts to guess the pastebin ID from the given code or URL. Returns the
 -- URL of the raw paste content. 8-digit paste IDs will be assumed to be
--- Pastebin and 10-digit paste IDs (and all others) will be assumed to be 
+-- Pastebin and 10-digit paste IDs (and all others) will be assumed to be
 -- SCPaste, regardless of the paste URL.
 local function extractRawUrl(paste)
   for i = 1, #PASTE_ID_PATTERNS do
     local code = paste:match(PASTE_ID_PATTERNS[i])
-    if code then 
+    if code then
       local encoded = textutils.urlEncode(code)
       if #code == 8 then
         return PASTEBIN_ENDPOINT .. "/raw/" .. encoded, code, PASTEBIN_NAME
@@ -73,6 +73,15 @@ local function extractRawUrl(paste)
   end
 
   return nil, nil
+end
+
+local function printTryAgain(errResponse)
+  if errResponse then
+    local headers = errResponse.getResponseHeaders()
+    if headers["Retry-After"] then
+      printError("Try again in " .. headers["Retry-After"] .. " seconds...")
+    end
+  end
 end
 
 local function get(url)
@@ -89,7 +98,7 @@ local function get(url)
 
   -- Add a cache buster so that Pastebin spam protection is re-checked
   local cacheBuster = ("%x"):format(math.random(0, 2 ^ 30))
-  local response, err = http.get(rawUrl .. "?cb=" .. cacheBuster)
+  local response, err, errResponse = http.get(rawUrl .. "?cb=" .. cacheBuster)
 
   if response then
     -- If Pastebin spam protection is activated, we get redirected to /paste
@@ -98,7 +107,7 @@ local function get(url)
     if not headers["Content-Type"] or not headers["Content-Type"]:find("^text/plain") then
       printError("Failed.")
 
-      if siteName == "pastebin.com" then
+      if siteName == PASTEBIN_NAME then
         printError("Pastebin blocked the download due to spam protection. Please complete the captcha in a web browser: https://pastebin.com/" .. textutils.urlEncode(paste))
       end
 
@@ -113,7 +122,9 @@ local function get(url)
     return sResponse
   else
     printError("Failed.\n")
+
     printError(err)
+    printTryAgain(errResponse)
   end
 end
 
@@ -151,7 +162,7 @@ if sCommand == "put" then
   writeCol(colors.lime, SC_PASTE_NAME)
   writeCol(colors.lightGray, "... ")
 
-  local response = http.post(
+  local response, err, errResponse = http.post(
     SC_PASTE_ENDPOINT .. "/api/v1/pastes" ..
     "?language=lua" ..
     "&name=" .. textutils.urlEncode(sName),
@@ -172,7 +183,10 @@ if sCommand == "put" then
     writeCol(colors.blue, "pastebin get " .. sCode)
     writeCol(colors.white, "\" to download anywhere\n")
   else
-    printError("Failed.")
+    printError("Failed.\n")
+
+    printError(err)
+    printTryAgain(errResponse)
   end
 elseif sCommand == "get" then
   -- Download a file from the guessed paste service
