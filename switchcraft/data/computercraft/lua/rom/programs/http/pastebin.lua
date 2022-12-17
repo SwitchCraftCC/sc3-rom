@@ -1,4 +1,4 @@
-local SC_PASTE_ENDPOINT = "https://ougi-p.sc3.io" -- TODO
+local SC_PASTE_ENDPOINT = "https://p.sc3.io" -- TODO
 local SC_PASTE_NAME = "p.sc3.io"
 local PASTEBIN_ENDPOINT = "https://pastebin.com"
 local PASTEBIN_NAME = "pastebin.com"
@@ -12,12 +12,6 @@ local PASTE_ID_PATTERNS = {
   "^p.sc3.io/([%a%d]+)$",
   "^https?://p.sc3.io/api/v1/pastes/([%a%d]+)(/raw/?)?$",
   "^p.sc3.io/api/v1/pastes/([%a%d]+)(/raw/?)?$",
-
-  -- SCPaste (temporary) TODO
-  "^https?://ougi%-p.sc3.io/([%a%d]+)$",
-  "^ougi%-p.sc3.io/([%a%d]+)$",
-  "^https?://ougi%-p.sc3.io/api/v1/pastes/([%a%d]+)(/raw/?)?$",
-  "^ougi%-p.sc3.io/api/v1/pastes/([%a%d]+)(/raw/?)?$",
 
   -- Pastebin
   "^https?://pastebin.com/([%a%d]+)$",
