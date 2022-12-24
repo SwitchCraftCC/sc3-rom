@@ -86,7 +86,7 @@ local function printHelpText()
     writeOn(text, colour, math.ceil((w - #text) / 2) - 1, relY)
   end
 
-  writeCenter("SwitchCraft Street Sign", colours.green, 1)
+  writeCenter("SwitchCraft Street Sign (#" .. os.getComputerID() .. ")", colours.green, 1)
 
   local labelParts = {}
   table.insert(labelParts, leftText)
