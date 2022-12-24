@@ -108,6 +108,10 @@ local function printHelpText()
   if not peripheral.find("monitor") then
     writeOn(" WARNING: No monitors found.", colours.red, 0, 1)
   end
+
+  if fs.isReadOnly("/") or fs.isReadOnly(".settings") then
+    writeOn(" WARNING: Filesystem is read-only.", colours.red, 0, 1)
+  end
 end
 
 printHelpText()
