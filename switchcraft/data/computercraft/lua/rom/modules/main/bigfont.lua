@@ -14,9 +14,14 @@
 local krist = true
 
 --### Initializing
+
+---Bigfont: Functions to write bigger font using drawing symbols
 local b = shell and {} or (_ENV or getfenv())
+---Version name
 b.versionName = "Bigfont By Wojbie"
+---Version number
 b.versionNum = 5.003 --2021-07-21
+---Table which contains documentation for some methods.
 b.doc = {}
 
 local expect, field if require then expect, field = require "cc.expect".expect, require "cc.expect".field else local ok, did = pcall(dofile,"rom/modules/main/cc/expect.lua") if ok then field, expect = did.field, did.expect else field, expect = function() end, function() end end end
@@ -188,7 +193,10 @@ local function makeText(nSize, sString, nFC, nBC, bBlit)
     return {tText, tFront, tBack}
 end
 
---# Writing in big font using current terminal settings.
+---Write text in big font using current terminal settings
+---@param sString string "Text to write"
+---@see bigfont.bigBlit
+---@see bigfont.bigPrint
 b.bigWrite = function(sString)
     expect(1, sString, "string")
     stamp(term, makeText(1, sString, term.getTextColor(), term.getBackgroundColor()), term.getCursorPos())
@@ -196,6 +204,13 @@ b.bigWrite = function(sString)
     term.setCursorPos(x, y - 2)
 end
 
+---Write big blit image using current terminal settings
+---@param sString string The image, in blit format
+---@param sFront "The foreground color"
+---@param sBack "The background color"
+---@see colors
+---@see bigfont.bigWrite
+---@see bigfont.bigPrint
 b.bigBlit = function(sString, sFront, sBack)
     expect(1, sString, "string")
     expect(2, sFront, "string")
@@ -207,13 +222,20 @@ b.bigBlit = function(sString, sFront, sBack)
     term.setCursorPos(x, y - 2)
 end
 
+---Print in big font using the current terminal settings
+---@param sString string "Text to write"
+---@see bigfont.bigBlit
+---@see bigfont.bigWrite
 b.bigPrint = function(sString)
     expect(1, sString, "string")
     stamp(term, makeText(1, sString, term.getTextColor(), term.getBackgroundColor()), term.getCursorPos())
     print()
 end
 
---# Writing in huge font using current terminal settings.
+---Write text in huge font using the current terminal settings
+---@param sString string "Text to write"
+---@see bigfont.hugeBlit
+---@see bigfont.hugePrint
 b.hugeWrite = function(sString)
     expect(1, sString, "string")
     stamp(term, makeText(2, sString, term.getTextColor(), term.getBackgroundColor()), term.getCursorPos())
@@ -221,6 +243,13 @@ b.hugeWrite = function(sString)
     term.setCursorPos(x, y - 8)
 end
 
+---Write blit image hugely using current terminal settings
+---@param sString string "The image, in blit format"
+---@param sFront "The foreground color"
+---@param sBack "The background color"
+---@see colors
+---@see bigfont.hugeWrite
+---@see bigfont.hugePrint
 b.hugeBlit = function(sString, sFront, sBack)
     expect(1, sString, "string")
     expect(2, sFront, "string")
@@ -232,14 +261,26 @@ b.hugeBlit = function(sString, sFront, sBack)
     term.setCursorPos(x, y - 8)
 end
 
+---Print text in huge font using the current terminal settings
+---@param sString string "Text to write"
+---@see bigfont.hugeWrite
+---@see bigfont.hugeBlit
 b.hugePrint = function(sString)
     expect(1, sString, "string")
     stamp(term, makeText(2, sString, term.getTextColor(), term.getBackgroundColor()), term.getCursorPos())
     print()
 end
 
---# Write/blit string on terminal in specified location
 b.doc.writeOn = [[writeOn(tTerminal, nSize, sString, [nX], [nY]) - Writes sString on tTerminal using current tTerminal colours. nX, nY are coordinates. If any of them are nil then text is centered in that axis using tTerminal size.]]
+---Writes `sString` on `tTerminal` using current `tTerminal` colors.
+---If any of the coordinates are `nil` then the text is centered in that axis using tTerminal size.
+---@param sString string "Text to write"
+---@param tTerminal term "Instance of the `term` module"
+---@param nSize integer "Size of the text"
+---@param nX integer "X coordinate to write to"
+---@param nY integer "Y coordinate to write to"
+---@see term
+---@see bigfont.blitOn
 b.writeOn = function(tTerminal, nSize, sString, nX, nY)
     expect(1, tTerminal, "table")
     field(tTerminal, "getSize", "function")
@@ -256,6 +297,17 @@ b.writeOn = function(tTerminal, nSize, sString, nX, nY)
 end
 
 b.doc.blitOn = [[writeOn(tTerminal, nSize, sString, sFront, sBack, [nX], [nY]) - Blits sString on tTerminal with sFront and sBack colors . nX, nY are coordinates. If any of them are nil then text is centered in that axis using tTerminal size.]]
+---Blits `sString` on `tTerminal` with `sFront` and `sBack` colors.
+---If any of the coordinates are `nil` then text is centered on that axis using `tTerminal` size.
+---@param sString string "Text to write"
+---@param tTerminal term "Instance of the `term` module"
+---@param nSize integer "Size of the text"
+---@param sFront string "Foreground color"
+---@param sBack string "Background color"
+---@param nX integer "X coordinate to write to"
+---@param nY integer "Y coordinate to write to"
+---@see term
+---@see bigfont.writeOn
 b.blitOn = function(tTerminal, nSize, sString, sFront, sBack, nX, nY)
     expect(1, tTerminal, "table")
     field(tTerminal, "getSize", "function")
@@ -273,8 +325,14 @@ b.blitOn = function(tTerminal, nSize, sString, sFront, sBack, nX, nY)
     press(tTerminal, makeText(nSize, sString, sFront, sBack, true), nX, nY)
 end
 
---#
 b.doc.makeBlittleText = [[makeBlittleText(nSize, sString, nFC, nBC) - Generate blittle object in size nSize with text sString in blittle format for printing with that api. nFC and nBC are colors to generate the object with.]]
+---Generate blittle object in size `nSize` with text `sString` in blittle format.
+---@param nSize integer "Size of the text"
+---@param sString string "Text to process"
+---@param nFC integer "Foreground color"
+---@param nBC integer "Background color"
+---@see blittle
+---@see color
 b.makeBlittleText = function(nSize, sString, nFC, nBC)
     expect(1, nSize, "number")
     expect(2, sString, "string")
@@ -286,7 +344,14 @@ b.makeBlittleText = function(nSize, sString, nFC, nBC)
     return out
 end
 
+
 b.doc.generateFontSize = [[generateFontSize(size) - Generates bigger font sizes and enables then on other functions that accept size argument. By default bigfont loads sizes 1-3 as those can be generated without yielding. Using this user can generate sizes 4-6. Warning: This function will internally yield.]]
+---Generates bigger font sizes and enables then on other functions that accept size argument. 
+---By default, bigfont loads sizes 1-3 as those can be generated without yielding.
+---Using this function, the user can generate sizes 4-6.
+-------
+---**Warning: This function will internally yield.**
+---@param size number "Target size"
 b.generateFontSize = function(size)
     expect(1, size, "number")
     if type(size) ~= "number" then error("Size needs to be a number",2) end
