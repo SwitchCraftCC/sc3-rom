@@ -1,10 +1,12 @@
 -- SwitchCraft chatbox legacy handler by Lemmmy
 -- Contact Lemmmy#4600 regarding any issues
 
-local chatbox = {}
+local chatbox = {} 
 
+---Websocket URI for the chatbox serveratbox = {}
 chatbox.SERVER_URL = "wss://chat.sc3.io"
 
+---Error messages for the chatbox server
 chatbox.closeReasons = {
   ["SERVER_STOPPING"] = 4000,
   ["EXTERNAL_GUESTS_NOT_ALLOWED"] = 4001,
@@ -144,7 +146,12 @@ local function handleClose(eventData)
   end
 end
 
--- prefix arg is no longer used
+---Uses the attached chatbox to say `text` with `name` globally.
+---@param text string "Message to send"
+---@param name string "Name of the speaker"
+---@param prefix? nil "Prefix to use; deprecated"
+---@param mode? string "Formatting mode to use; defaults to Markdown"
+---@return boolean
 function chatbox.say(text, name, prefix, mode)
   if not isConnected() or not ws then error("Chatbox is not connected.", 2) end
   if not hasCapability("say") then error("You do not have the 'say' capability.", 2) end
@@ -162,6 +169,12 @@ function chatbox.say(text, name, prefix, mode)
   return true -- compat
 end
 
+---Uses the attached chatbox to send `text` to `user` as `name`
+---@param user string "The target user"
+---@param text string "Message to send"
+---@param name string "Name of the speaker"
+---@param prefix? nil "Prefix to use; deprecated"
+---@param mode? string "Formatting mode to use; defaults to Markdown"
 function chatbox.tell(user, text, name, prefix, mode)
   if not isConnected() or not ws then error("Chatbox is not connected.", 2) end
   if not hasCapability("tell") then error("You do not have the 'tell' capability.", 2) end
@@ -181,11 +194,16 @@ function chatbox.tell(user, text, name, prefix, mode)
   return true -- compat
 end
 
+---Halts all of this program's running chatboxes.
+---@return nil
 function chatbox.stop()
   running = false
   if ws then ws.close() end
 end
 
+---Runs the chatbox.
+---@return string chatboxError "Error message of the chatbox"
+---@return integer chatboxErrorCode "Error code of the chatbox"
 function chatbox.run()
   if running then
     error("Chatbox is already running.", 2)
@@ -220,27 +238,41 @@ function chatbox.run()
   return chatboxError ~= nil and chatboxErrorCode ~= nil, chatboxError, chatboxErrorCode
 end
 
+---Returns the chatbox's error
+---@return string chatboxError "Error message of the chatbox"
+---@return integer chatboxErrorCode "Error code of the chatbox"
 function chatbox.getError()
   return chatboxError, chatboxErrorCode
 end
 
+---Returns the status of the chatbox
+---@return boolean running
+---@return boolean connected
 function chatbox.isConnected()
   return running and connected
 end
 
+---Returns the owner of the license key.
+---@return string licenseOwner "Owner of the license"
 function chatbox.getLicenseOwner()
   return licenseOwner
 end
 
+---Returns the capabilities of the chatbox
+---@return table capabilities
 function chatbox.getCapabilities()
   return capabilities or {}
 end
 
+---Returns the usernames of chatbox users
+---@return table players
 function chatbox.getPlayers()
   return players or {}
 end
 
--- legacy compat
+---Returns the usernames and UUIDs of chatbox users
+---@deprecated "Retained for compatibility only"
+---@return table
 function chatbox.getPlayerList()
   if not players then return {} end
   local out = {}
@@ -250,6 +282,9 @@ function chatbox.getPlayerList()
   return out
 end
 
+---Checks if the chatbox has a capability
+---@deprecated "Retained for compatibility only"
+---@return boolean
 function chatbox.hasCapability(capability)
   if not capabilities then return false end
   for _, cap in pairs(capabilities) do
