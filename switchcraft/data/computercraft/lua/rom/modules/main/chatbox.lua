@@ -3,7 +3,7 @@
 
 local chatbox = {}
 
-chatbox.SERVER_URL = "wss://sc-chatbox-ougi.lem.sh"
+chatbox.SERVER_URL = "wss://chat.sc3.io"
 
 chatbox.closeReasons = {
   ["SERVER_STOPPING"] = 4000,
