@@ -1,3 +1,5 @@
+local chatbox = require("chatbox")
+
 local args = {...}
 
 local events = {"join", "leave", "death", "chat_ingame", "chat_discord", "chat_chatbox", "command", "afk", "afk_return", "server_restart_scheduled", "server_restart_cancelled"}
