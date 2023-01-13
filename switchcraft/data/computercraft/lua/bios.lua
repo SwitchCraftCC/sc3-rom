@@ -483,6 +483,9 @@ function dofile(_sFile)
     end
 end
 
+local make_package = dofile("rom/modules/main/cc/require.lua").make
+require, package = make_package(_G, "/")
+
 -- Install the rest of the OS api
 function os.run(_tEnv, _sPath, ...)
     expect(1, _tEnv, "table")
