@@ -721,6 +721,11 @@ settings.define("bios.strict_globals", {
     description = "Prevents assigning variables into a program's environment. Make sure you use the local keyword or assign to _G explicitly.",
     type = "boolean",
 })
+settings.define("shell.append_path", {
+    default = "",
+    description = [[A string to append to path, double check before restarting.]],
+    type = "string",
+})
 settings.define("shell.autocomplete_hidden", {
     default = false,
     description = [[Autocomplete hidden files and folders (those starting with ".").]],
