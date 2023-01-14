@@ -10,10 +10,17 @@ local rightText = settings.get("streetsign.rightText")
 local unnamedStreet = settings.get("streetsign.unnamedStreet", "New Street")
 local unnamedStreetHint = settings.get("streetsign.unnamedStreetHint", "Help name this street!")
 
+local combinedColours = {}
+for k, v in pairs(colours) do
+  combinedColours[k] = v
+end
+combinedColours.gray = combinedColours.grey
+combinedColours.lightGray = combinedColours.lightGrey
+
 local backgroundColourName = settings.get("streetsign.backgroundColour", "green")
-local backgroundColour = colours[backgroundColourName]
+local backgroundColour = combinedColours[backgroundColourName]
 local textColourName = settings.get("streetsign.textColour", "white")
-local textColour = colours[textColourName]
+local textColour = combinedColours[textColourName]
 
 local backgroundPalette = settings.get("streetsign.backgroundPalette", "5da818")
 
@@ -23,9 +30,9 @@ if (settings.get("motd.enable") or settings.get("shell.allow_disk_startup")) the
   settings.save("/.settings")
 end
 
-if not colours[backgroundColourName] then
+if not combinedColours[backgroundColourName] then
   error(string.format("Street Sign:\nBackground colour `%s` is invalid.", backgroundColourName), 0)
-elseif not colours[textColourName] then
+elseif not combinedColours[textColourName] then
   error(string.format("Street Sign:\nText colour `%s` is invalid.", textColourName), 0)
 end
 
