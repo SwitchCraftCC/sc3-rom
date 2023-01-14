@@ -1,7 +1,7 @@
 -- SwitchCraft chatbox legacy handler by Lemmmy
 -- Contact Lemmmy#4600 regarding any issues
 
-SERVER_URL = "wss://sc-chatbox-ougi.lem.sh"
+SERVER_URL = "wss://chat.sc3.io"
 
 closeReasons = {
   ["SERVER_STOPPING"] = 4000,

@@ -93,7 +93,7 @@ local function printHelpText()
     writeOn(text, colour, math.ceil((w - #text) / 2) - 1, relY)
   end
 
-  writeCenter("SwitchCraft Street Sign", colours.green, 1)
+  writeCenter("SwitchCraft Street Sign (#" .. os.getComputerID() .. ")", colours.green, 1)
 
   local labelParts = {}
   table.insert(labelParts, leftText)
@@ -114,6 +114,10 @@ local function printHelpText()
 
   if not peripheral.find("monitor") then
     writeOn(" WARNING: No monitors found.", colours.red, 0, 1)
+  end
+
+  if fs.isReadOnly("/") or fs.isReadOnly(".settings") then
+    writeOn(" WARNING: Filesystem is read-only.", colours.red, 0, 1)
   end
 end
 

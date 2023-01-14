@@ -62,7 +62,10 @@ if #monitors == 0 then
   error("No monitors found.", 0)
 end
 
-local advMonitors = _.reduce(monitors, function(sum, m) return sum + (m.mon.isColour() and 1 or 0) end, 0)
+local advMonitors = 0
+for _, mon in pairs(monitors) do
+  if mon.mon.isColour() then advMonitors = advMonitors + 1 end
+end
 local basicMonitors = #monitors - advMonitors
 
 print(string.format(
