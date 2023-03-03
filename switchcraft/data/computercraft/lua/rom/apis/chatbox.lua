@@ -61,6 +61,17 @@ local function handleChatMessage(data)
   )
 end
 
+local function updatePlayer(player)
+  for i, p in ipairs(players) do
+    if p.uuid == player.uuid then
+      players[i] = player
+      return
+    end
+  end
+
+  table.insert(players, player)
+end
+
 local function handleEventMessage(data)
   if not data.event then return end
 
@@ -77,8 +88,10 @@ local function handleEventMessage(data)
       data
     )
   elseif data.event == "afk" then
+    updatePlayer(data.user)
     os.queueEvent("afk", data.user.name or data.user.uuid, data)
   elseif data.event == "afk_return" then
+    updatePlayer(data.user)
     os.queueEvent("afk_return", data.user.name or data.user.uuid, data)
   elseif data.event == "chat_ingame" or data.event == "chat_discord" or data.event == "chat_chatbox" then
     handleChatMessage(data)
