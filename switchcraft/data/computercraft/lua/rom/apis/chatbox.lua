@@ -87,6 +87,14 @@ local function handleEventMessage(data)
       data.text,
       data
     )
+  elseif data.event == "world_change" then
+    os.queueEvent(
+      "world_change",
+      data.user.name or data.user.uuid,
+      data.origin,
+      data.destination,
+      data
+    )
   elseif data.event == "afk" then
     updatePlayer(data.user)
     os.queueEvent("afk", data.user.name or data.user.uuid, data)
