@@ -88,6 +88,7 @@ local function handleEventMessage(data)
       data
     )
   elseif data.event == "world_change" then
+    updatePlayer(data.user)
     os.queueEvent(
       "world_change",
       data.user.name or data.user.uuid,
