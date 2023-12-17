@@ -8,7 +8,7 @@ else
 fi
 
 find switchcraft -type f | sed -e 's/switchcraft\///' | while read file; do
-  if [ -f "CC-Tweaked/src/main/resources/$file" ]; then
-    diff -u "switchcraft/$file" "CC-Tweaked/src/main/resources/$file"
+  if [ -f "CC-Tweaked/projects/core/src/main/resources/$file" ]; then
+    grc diff -u "switchcraft/$file" "CC-Tweaked/projects/core/src/main/resources/$file"
   fi
 done

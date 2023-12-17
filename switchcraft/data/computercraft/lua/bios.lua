@@ -1,3 +1,7 @@
+-- SPDX-FileCopyrightText: 2017 Daniel Ratcliffe
+--
+-- SPDX-License-Identifier: LicenseRef-CCPL
+
 -- Load in expect from the module path.
 --
 -- Ideally we'd use require, but that is part of the shell, and so is not
@@ -7,65 +11,27 @@ local expect
 
 do
     local h = fs.open("rom/modules/main/cc/expect.lua", "r")
-    local f, err = loadstring(h.readAll(), "@expect.lua")
+    local f, err = loadstring(h.readAll(), "@/rom/modules/main/cc/expect.lua")
     h.close()
 
     if not f then error(err) end
     expect = f().expect
 end
 
-if _VERSION == "Lua 5.1" then
-    -- If we're on Lua 5.1, install parts of the Lua 5.2/5.3 API so that programs can be written against it
-    local nativeload = load
-
-    function load(x, name, mode, env)
-        expect(1, x, "function", "string")
-        expect(2, name, "string", "nil")
-        expect(3, mode, "string", "nil")
-        expect(4, env, "table", "nil")
-
-        local ok, p1, p2 = pcall(function()
-            local result, err = nativeload(x, name, mode, env)
-            if result and env then
-                env._ENV = env
-            end
-            return result, err
-        end)
-        if ok then
-            return p1, p2
-        else
-            error(p1, 2)
-        end
-    end
-
-    if _CC_DISABLE_LUA51_FEATURES then
-        -- Remove the Lua 5.1 features that will be removed when we update to Lua 5.2, for compatibility testing.
-        -- See "disable_lua51_functions" in ComputerCraft.cfg
-        setfenv = nil
-        getfenv = nil
-        loadstring = nil
-        unpack = nil
-        math.log10 = nil
-        table.maxn = nil
-    else
-        loadstring = function(string, chunkname) return nativeload(string, chunkname) end
-
-        -- Inject a stub for the old bit library
-        _G.bit = {
-            bnot = bit32.bnot,
-            band = bit32.band,
-            bor = bit32.bor,
-            bxor = bit32.bxor,
-            brshift = bit32.arshift,
-            blshift = bit32.lshift,
-            blogic_rshift = bit32.rshift,
-        }
-    end
-end
+-- Inject a stub for the old bit library
+_G.bit = {
+    bnot = bit32.bnot,
+    band = bit32.band,
+    bor = bit32.bor,
+    bxor = bit32.bxor,
+    brshift = bit32.arshift,
+    blshift = bit32.lshift,
+    blogic_rshift = bit32.rshift,
+}
 
 -- Install lua parts of the os api
 function os.version()
-    return "CraftOS 1.8"
+    return "CraftOS 1.9"
 end
 
 function os.pullEventRaw(sFilter)
@@ -467,7 +433,7 @@ function loadfile(filename, mode, env)
     local file = fs.open(filename, "r")
     if not file then return nil, "File not found" end
 
-    local func, err = load(file.readAll(), "@" .. fs.getName(filename), mode, env)
+    local func, err = load(file.readAll(), "@/" .. fs.combine(filename), mode, env)
     file.close()
     return func, err
 end
@@ -683,7 +649,7 @@ settings.define("paint.default_extension", {
 
 settings.define("list.show_hidden", {
     default = false,
-    description = [[Show hidden files (those starting with "." in the Lua REPL).]],
+    description = [[Whether the list program show  hidden files (those starting with ".").]],
     type = "boolean",
 })
 
@@ -700,7 +666,7 @@ settings.define("motd.path", {
 
 settings.define("lua.warn_against_use_of_local", {
     default = true,
-    description = [[Print a message when input in the Lua REPL starts with the word 'local'. Local variables defined in the Lua REPL are be inaccessable on the next input.]],
+    description = [[Print a message when input in the Lua REPL starts with the word 'local'. Local variables defined in the Lua REPL are be inaccessible on the next input.]],
     type = "boolean",
 })
 settings.define("lua.function_args", {
