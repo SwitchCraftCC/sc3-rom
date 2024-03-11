@@ -80,10 +80,13 @@ local function handleEventMessage(data)
   if not data.event then return end
 
   if data.event == "join" then
+    updatePlayer(data.user)
     os.queueEvent("join", data.user.name or data.user.uuid, data)
   elseif data.event == "leave" then
+    updatePlayer(data.user)
     os.queueEvent("leave", data.user.name or data.user.uuid, data)
   elseif data.event == "death" then
+    updatePlayer(data.user)
     os.queueEvent(
       "death",
       data.user.name or data.user.uuid,
@@ -136,6 +139,13 @@ local function handleMessage(eventData)
     licenseOwnerUser = data.licenseOwnerUser
   elseif data.type == "players" then
     players = data.players
+
+    for i, player in ipairs(players) do
+      if licenseOwnerUser and player.uuid == licenseOwnerUser.uuid then
+        licenseOwnerUser = player
+        break
+      end
+    end
   elseif data.type == "event" then
     handleEventMessage(data)
   end
