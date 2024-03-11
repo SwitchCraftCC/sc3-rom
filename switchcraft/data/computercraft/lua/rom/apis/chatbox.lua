@@ -18,7 +18,7 @@ closeReasons = {
 local running = false
 local connected = false
 local ws, wsURL, licenseKey
-local licenseOwner, capabilities, players
+local licenseOwner, licenseOwnerUser, capabilities, players
 local connectionAttempts = 0
 local chatboxError, chatboxErrorCode
 
@@ -62,6 +62,10 @@ local function handleChatMessage(data)
 end
 
 local function updatePlayer(player)
+  if licenseOwnerUser and player.uuid == licenseOwnerUser.uuid then
+    licenseOwnerUser = player
+  end
+  
   for i, p in ipairs(players) do
     if p.uuid == player.uuid then
       players[i] = player
@@ -129,6 +133,7 @@ local function handleMessage(eventData)
     connected = true
     licenseOwner = data.licenseOwner
     capabilities = data.capabilities
+    licenseOwnerUser = data.licenseOwnerUser
   elseif data.type == "players" then
     players = data.players
   elseif data.type == "event" then
@@ -249,7 +254,7 @@ function isConnected()
 end
 
 function getLicenseOwner()
-  return licenseOwner
+  return licenseOwner, licenseOwnerUser
 end
 
 function getCapabilities()
